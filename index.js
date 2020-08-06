@@ -17,7 +17,7 @@ async function loadWikiPrices() {
 			let name = lines[i].split("\"")[1];
 			let price = lines[i].split("=")[1].trim();
 			if (prices[name])
-				console.log("Duplicate "+name);
+				console.log("Duplicate " + name);
 			prices[name] = price;
 		}
 		break; // Only want first one, incase of duplicates?
@@ -27,7 +27,8 @@ async function loadWikiPrices() {
 
 (async function doStoof() {
 	let ambiguous = JSON.parse(await fs.readFile("./ambiguous.json"));
-	let [ wiki, rsbuddy ] = await Promise.all([loadWikiPrices(), loadRSBuddy()]);
+	let last = await fs.exists("./prices.json") ? JSON.parse(await fs.readFile("./prices.json")) : {};
+	let [wiki, rsbuddy] = await Promise.all([loadWikiPrices(), loadRSBuddy()]);
 
 	let dupes = {};
 	Object.values(rsbuddy)
@@ -39,9 +40,9 @@ async function loadWikiPrices() {
 		let valid = false;
 		if (!ambiguous[wikiName]) {
 			if ((!dupes[wikiName] || dupes[wikiName] > 1)
-					&& dupes[wikiName.split("(")[0].trim()] > 1) {
+				&& dupes[wikiName.split("(")[0].trim()] > 1) {
 				// Print out template for adding to `ambiguous.json`
-				console.log("\""+wikiName+"\": ,");
+				console.log("\"" + wikiName + "\": ,");
 			} else {
 				for (let id in rsbuddy) {
 					if (rsbuddy[id].name === wikiName) {
@@ -61,12 +62,20 @@ async function loadWikiPrices() {
 		}
 		if (!valid) {
 			if (ambiguous[wikiName] !== -1)
-				console.log("Unknown item: "+wikiName);
+				console.log("Unknown item: " + wikiName);
 		} else {
+			if (!last[valid.id]) {
+				last[valid.id] = {
+					ge_price: 0,
+					buy_avg: 0,
+					sell_avg: 0
+				};
+			}
 			output[valid.id] = {
-				ge_price: wiki[wikiName],
-				buy_avg: valid.buy_average,
-				sell_avg: valid.sell_average
+				// Use || here to use most recent non-0 value
+				ge_price: wiki[wikiName] || last[valid.id].ge_price,
+				buy_avg: valid.buy_average || last[valid.id].buy_avg,
+				sell_avg: valid.sell_average || last[valid.id].sell_avg
 			};
 		}
 	}

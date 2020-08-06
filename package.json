@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "fs-extra": "^9.0.1",
-    "request": "^2.88.2"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {},
   "scripts": {
