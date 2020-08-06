@@ -1,0 +1,20 @@
+{
+  "name": "osrs-ge-price-aggregator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "fs-extra": "^9.0.1",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/basketti/osrs-ge-price-aggregator.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
