@@ -8,3 +8,8 @@ price data into a single JSON file.
 After installing node, run `npm install` in the directory to download dependencies.
 Afterwards simply call `node index.js` and it'll aggregate ge prices into a
 `prices.json` file in the same directory.
+
+## Update script
+
+Using the update script runs the program like above, but then zips and generates
+a chksum for that.

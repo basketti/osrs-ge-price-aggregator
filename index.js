@@ -18,7 +18,7 @@ async function loadWikiPrices() {
 			let price = lines[i].split("=")[1].trim();
 			if (prices[name])
 				console.log("Duplicate " + name);
-			prices[name] = price;
+			prices[name] = parseInt(price);
 		}
 		break; // Only want first one, incase of duplicates?
 	}
@@ -27,7 +27,12 @@ async function loadWikiPrices() {
 
 (async function doStoof() {
 	let ambiguous = JSON.parse(await fs.readFile("./ambiguous.json"));
-	let last = await fs.exists("./prices.json") ? JSON.parse(await fs.readFile("./prices.json")) : {};
+	if (!await fs.exists("./public")) {
+		await fs.mkdir("./public");
+	}
+	let last = await fs.exists("./public/prices.json")
+			? JSON.parse(await fs.readFile("./public/prices.json"))
+			: {};
 	let [wiki, rsbuddy] = await Promise.all([loadWikiPrices(), loadRSBuddy()]);
 
 	let dupes = {};
@@ -79,5 +84,5 @@ async function loadWikiPrices() {
 			};
 		}
 	}
-	fs.writeFile("./prices.json", JSON.stringify(output), null, 4);
+	fs.writeFile("./public/prices.json", JSON.stringify(output), null, 4);
 })();
